@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS trusted_devices (username TEXT NOT NULL, device_id TEXT NOT NULL, trusted INTEGER NOT NULL DEFAULT 0, fingerprint TEXT NOT NULL DEFAULT '', confirmed_at INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(username, device_id));
+CREATE TABLE IF NOT EXISTS key_events (id TEXT PRIMARY KEY, username TEXT NOT NULL, device_id TEXT NOT NULL, type TEXT NOT NULL, value TEXT NOT NULL, created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_key_events_user ON key_events(username, created_at);
+CREATE TABLE IF NOT EXISTS notifications (id TEXT PRIMARY KEY, username TEXT NOT NULL, type TEXT NOT NULL, value TEXT NOT NULL, read_at INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(username, read_at, created_at);
+CREATE TABLE IF NOT EXISTS presence (username TEXT PRIMARY KEY, mode TEXT NOT NULL DEFAULT 'online', last_seen_at INTEGER NOT NULL DEFAULT 0, value TEXT NOT NULL DEFAULT '{}');
+CREATE TABLE IF NOT EXISTS group_audit (id TEXT PRIMARY KEY, chat_id TEXT NOT NULL, actor TEXT NOT NULL, action TEXT NOT NULL, value TEXT NOT NULL, created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_group_audit_chat ON group_audit(chat_id, created_at);
+CREATE TABLE IF NOT EXISTS invite_links (code TEXT PRIMARY KEY, chat_id TEXT NOT NULL, created_by TEXT NOT NULL, expires_at INTEGER NOT NULL DEFAULT 0, max_uses INTEGER NOT NULL DEFAULT 0, uses INTEGER NOT NULL DEFAULT 0, value TEXT NOT NULL, created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_invite_links_chat ON invite_links(chat_id);
+CREATE TABLE IF NOT EXISTS media_refs (file_id TEXT PRIMARY KEY, hash TEXT NOT NULL DEFAULT '', thumb TEXT NOT NULL DEFAULT '', refs INTEGER NOT NULL DEFAULT 0, value TEXT NOT NULL, updated_at INTEGER NOT NULL);
