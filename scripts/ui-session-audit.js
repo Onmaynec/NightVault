@@ -1,0 +1,22 @@
+"use strict";
+const fs = require("fs");
+const path = require("path");
+const root = path.join(__dirname, "..");
+const read = (f) => fs.readFileSync(path.join(root, f), "utf8");
+const checks = [];
+function check(name, ok) { checks.push({ name, ok: Boolean(ok) }); console.log(`${ok ? "OK" : "FAIL"} ${name}`); }
+const main = read("src/main.js");
+const renderer = read("src/renderer.js");
+const css = read("src/style.css");
+const pkg = JSON.parse(read("package.json"));
+check("version semver 1.3.3", pkg.version === "1.3.3");
+check("release label 1.3.3", renderer.includes('const RELEASE_LABEL = "1.3.3"'));
+check("per-profile userData isolation", main.includes("client-profiles") && main.includes("NIGHTVAULT_PROFILE_ID") && main.includes("partition: `persist:nightvault-client-${clientProfileId}`"));
+check("E2EE current-device resync endpoint client", renderer.includes("/devices/e2ee/current") && renderer.includes("nv131RegisterCurrentDevice"));
+check("401 invalid session refresh retry", renderer.includes("nv131AuthorizedFetch") && renderer.includes("/сессия|session|token/i"));
+check("two panel workspace", renderer.includes("nv131Workspace") && css.includes(".nv131Workspace") && css.includes("grid-template-columns:minmax(300px,390px) minmax(0,1fr)"));
+check("emoji vertical popup and close button", renderer.includes("emojiClose") && css.includes("flex-direction:column") && css.includes("overflow-y:auto"));
+check("compact button layer", css.includes("profileActions .btn") && css.includes("min-height:38px"));
+check("release history cleanup script output", fs.existsSync(path.join(root, "release-history", "read_version1.3.3RELEASE.md")));
+if (checks.some((c) => !c.ok)) process.exit(1);
+console.log(`ui-session audit passed: ${checks.length} checks.`);

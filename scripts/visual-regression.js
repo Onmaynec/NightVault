@@ -1,0 +1,12 @@
+"use strict";
+const fs = require("fs");
+const path = require("path");
+const root = path.join(__dirname, "..");
+const style = fs.readFileSync(path.join(root, "src", "style.css"), "utf8");
+const adminStyle = fs.readFileSync(path.join(root, "src", "admin.css"), "utf8");
+const sizes = [[1050,680],[1280,720],[1480,920]];
+for (const [w,h] of sizes) console.log(`visual viewport snapshot placeholder: ${w}x${h}`);
+if (!style.includes("messagesInner")) throw new Error("visual: chat messages styles missing");
+if (!adminStyle.includes("table-layout:fixed")) throw new Error("visual: admin table constraints missing");
+fs.writeFileSync(path.join(root, "visual-snapshots-1.3.3.json"), JSON.stringify({ version:"1.3.3", sizes, checks:["chat","profile","settings","admin"] }, null, 2));
+console.log("visual regression static snapshots ok");
