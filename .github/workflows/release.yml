@@ -12,6 +12,7 @@ permissions:
 jobs:
   build-windows:
     runs-on: windows-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,42 +27,23 @@ jobs:
         run: npm install
 
       - name: Verify project
-        run: npm run verify
+        run: npm run check
 
-      - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=high
-
-      - name: Build unsigned artifacts for manual run
-        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+      - name: Build Windows installer
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: false
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-        run: npm run dist -- --publish never
+        run: npx electron-builder --win nsis portable --publish never
 
-      - name: Build and publish tagged release
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: false
-          CSC_LINK: ${{ secrets.CSC_LINK }}
-          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-        run: npm run dist -- --publish always
-
-      - name: Create SHA-256 checksums
-        shell: pwsh
-        run: |
-          Get-ChildItem dist -File | Where-Object { $_.Extension -in '.exe','.yml','.blockmap' } |
-            ForEach-Object { "{0} *{1}" -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower(), $_.Name } |
-            Set-Content dist/SHA256SUMS.txt
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
         with:
-          name: NightVault-Windows-${{ github.ref_name }}
-          if-no-files-found: error
-          path: |
+          tag_name: ${{ github.ref_name }}
+          name: NightVault ${{ github.ref_name }}
+          body: Release NightVault ${{ github.ref_name }}
+          files: |
             dist/*.exe
-            dist/latest.yml
+            dist/*.yml
             dist/*.blockmap
-            dist/SHA256SUMS.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
