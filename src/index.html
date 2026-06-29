@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' file:; script-src-elem 'self' file:; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src http: https: ws: wss:; font-src 'self' data:; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>NightVault</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="auth">
+        <div class="authBox panelIn">
+          <div class="logo">Night<span>Vault</span></div>
+          <div class="small">Загрузка интерфейса…</div>
+          <div class="bootLoader"></div>
+        </div>
+      </div>
+    </div>
+    <script src="boot-check.js"></script>
+    <script src="renderer/core.js"></script>
+    <script src="renderer/api.js"></script>
+    <script src="renderer/messages.js"></script>
+    <script src="renderer/backup.js"></script>
+    <script src="renderer/contacts.js"></script>
+    <script src="renderer/diagnostics.js"></script>
+    <script src="renderer/actions.js"></script>
+    <script src="renderer/state.js"></script>
+    <script src="renderer/render-chat.js"></script>
+    <script src="renderer/render-profile.js"></script>
+    <script src="renderer/render-settings.js"></script>
+    <script src="renderer/render-admin-tools.js"></script>
+    <script src="renderer/e2ee.js"></script>
+    <script src="renderer/files.js"></script>
+    <script src="renderer/sync.js"></script>
+    <script src="renderer/themes.js"></script>
+    <script src="renderer/diagnostics-v13.js"></script>
+    <script src="renderer/events.js"></script>
+    <script src="renderer.js"></script>
+  </body>
+</html>
