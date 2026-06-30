@@ -1,0 +1,124 @@
+{
+  "name": "nightvault-messenger",
+  "version": "1.4.3",
+  "description": "NightVault 1.4.3 — Real UX, Reliability & Tester Feedback Update: runtime UI checks, tester e2e flows, native controls audit, voice/media polish, backup assistant, Radmin helper and release preflight hardening.",
+  "main": "src/main.js",
+  "scripts": {
+    "server": "node server/server.js",
+    "client": "electron .",
+    "doctor": "node scripts/doctor.js",
+    "test": "node --test tests/*.test.js",
+    "build:win": "electron-builder --win nsis --publish never",
+    "pack:win": "electron-builder --win portable --publish never",
+    "build:installer": "electron-builder --win nsis --publish never",
+    "build:portable": "electron-builder --win portable --publish never",
+    "dist": "electron-builder --win nsis portable",
+    "check": "node --check src/main.js && node --check src/preload.js && node --check src/admin-preload.js && node --check src/admin-renderer.js && node --check src/boot-check.js && node --check src/renderer.js && node --check src/renderer/core.js && node --check src/renderer/api.js && node --check src/renderer/messages.js && node --check src/renderer/backup.js && node --check src/renderer/contacts.js && node --check src/renderer/diagnostics.js && node --check src/renderer/actions.js && node --check server/server.js && node --check server/lib/config.js && node --check server/lib/security.js && node --check server/lib/store.js && node --check server/lib/validation.js && node --check server/services/security-events.js && node --check server/services/privacy.js && node --check server/services/upload-policy.js && node --check server/services/messages.js && node --check server/services/chat-export.js && node --check server/services/contacts.js && node --check server/services/readiness.js && node --check server/routes/README.js && node --check scripts/doctor.js && node --check tests/server.test.js && node --check tests/security-features.test.js && node --check scripts/render-audit.js && node --check server/lib/migrations.js && node --check server/lib/sync-engine.js && node --check server/lib/debug-report.js && node --check server/services/admin-tests.js && node --check server/services/e2ee-trust.js && node --check server/services/media-pipeline.js && node --check server/services/presence.js && node --check server/services/notifications.js && node --check server/services/search-index.js && node --check src/renderer/state.js && node --check src/renderer/render-chat.js && node --check src/renderer/render-profile.js && node --check src/renderer/render-settings.js && node --check src/renderer/render-admin-tools.js && node --check src/renderer/e2ee.js && node --check src/renderer/files.js && node --check src/renderer/sync.js && node --check src/renderer/themes.js && node --check src/renderer/diagnostics-v13.js && node --check src/renderer/events.js && node --check scripts/lint.js && node --check scripts/format-check.js && node --check scripts/typecheck-jsdoc.js && node --check scripts/e2e-smoke.js && node --check scripts/visual-regression.js && node --check scripts/collect-debug-report.js && node --check scripts/sync-audit.js && node --check tests/sync-engine.test.js && node --check tests/migrations.test.js && node --check tests/ui-session.test.js && node --check scripts/release-preflight.js && node --check scripts/e2e-real-smoke.js && node --check scripts/architecture-audit.js && node --check src/client/ui-action-router.js && node --check src/client/media/voice.js && node --check src/client/media/viewer.js && node --check src/client/ui/context-menu.js && node --check src/client/ui/toast.js && node --check src/client/events.js && node --check src/client/state.js && node --check src/client/api.js && node --check scripts/ui-runtime-check.js && node --check scripts/native-controls-audit.js && node --check scripts/e2e-tester-flow.js",
+    "verify": "npm run doctor && npm run check && npm run lint && npm run format && npm run typecheck && npm run audit && npm run release-audit && npm run admin-audit && npm run messenger-audit && npm run perf-audit && npm run security-pro-audit && npm run architecture-audit && npm run release:preflight && npm run line-audit && npm run render-audit && npm run mega-audit && npm run sync-audit && npm run ui-audit && npm run e2e && npm run visual && npm run native-controls-audit && npm run ui:runtime-check && npm run e2e:tester && npm test",
+    "release:patch": "npm version patch && git push && git push --tags",
+    "admin": "electron . --admin",
+    "server-admin": "electron . --admin",
+    "audit": "node scripts/globalfix-audit.js",
+    "strict-audit": "node scripts/globalfix-audit.js",
+    "line-audit": "node scripts/strict-line-audit.js",
+    "render-audit": "node scripts/render-audit.js",
+    "mega-audit": "node scripts/mega-audit.js",
+    "lint": "node scripts/lint.js",
+    "format": "node scripts/format-check.js",
+    "typecheck": "node scripts/typecheck-jsdoc.js",
+    "e2e": "node scripts/e2e-smoke.js",
+    "visual": "node scripts/visual-regression.js",
+    "debug-report": "node scripts/collect-debug-report.js",
+    "sync-audit": "node scripts/sync-audit.js",
+    "ui-audit": "node scripts/ui-session-audit.js",
+    "build:all-win": "electron-builder --win nsis portable --publish never",
+    "release-audit": "node scripts/release-audit.js",
+    "admin-audit": "node scripts/admin-pro-audit.js",
+    "messenger-audit": "node scripts/messenger-features-audit.js",
+    "security-pro-audit": "node scripts/security-pro-audit.js",
+    "perf-audit": "node scripts/perf-audit.js",
+    "release:preflight": "node scripts/release-preflight.js",
+    "e2e:real": "node scripts/e2e-real-smoke.js",
+    "architecture-audit": "node scripts/architecture-audit.js",
+    "ui:runtime-check": "node scripts/ui-runtime-check.js",
+    "native-controls-audit": "node scripts/native-controls-audit.js",
+    "e2e:tester": "node scripts/e2e-tester-flow.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^5.2.1",
+    "multer": "^2.2.0",
+    "ws": "^8.21.0",
+    "electron-updater": "^6.8.9"
+  },
+  "devDependencies": {
+    "electron": "^42.5.0",
+    "electron-builder": "^26.15.3",
+    "eslint": "^9.18.0",
+    "prettier": "^3.4.2"
+  },
+  "build": {
+    "appId": "com.nightvault.messenger",
+    "productName": "NightVault",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "server/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "NightVault-${version}-${arch}.${ext}",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "NightVault",
+      "artifactName": "NightVault-Setup-${version}.${ext}",
+      "uninstallDisplayName": "NightVault",
+      "deleteAppDataOnUninstall": false,
+      "runAfterFinish": true
+    },
+    "asar": true,
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "Onmaynec",
+        "repo": "NightVault",
+        "releaseType": "release"
+      }
+    ],
+    "artifactName": "NightVault-${version}-${os}-${arch}.${ext}"
+  },
+  "author": "Roman Mamleev",
+  "packageManager": "npm@10.9.2",
+  "overrides": {
+    "read-binary-file-arch": "1.0.6",
+    "yauzl": "^3.3.1"
+  },
+  "engines": {
+    "node": ">=22.5.0",
+    "npm": ">=10.0.0"
+  }
+}
