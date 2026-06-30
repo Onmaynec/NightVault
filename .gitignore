@@ -1,0 +1,14 @@
+node_modules/
+dist/
+uploads/
+server/data.json
+*.log
+npm-debug.log*
+.DS_Store
+.env
+server/runtime/
+coverage/
+*.key
+*.pem
+*.pfx
+*.p12
