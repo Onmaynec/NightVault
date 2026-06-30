@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS chat_members (chat_id TEXT NOT NULL, username TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'member', joined_at INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(chat_id, username));
+CREATE INDEX IF NOT EXISTS idx_chat_members_user ON chat_members(username, chat_id);
+CREATE TABLE IF NOT EXISTS devices (username TEXT NOT NULL, device_id TEXT NOT NULL, trusted INTEGER NOT NULL DEFAULT 0, fingerprint TEXT NOT NULL DEFAULT '', public_key TEXT NOT NULL DEFAULT '', last_seen_at INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(username, device_id));
+CREATE INDEX IF NOT EXISTS idx_devices_username ON devices(username);
+CREATE TABLE IF NOT EXISTS message_reactions (message_id TEXT NOT NULL, username TEXT NOT NULL, reaction TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY(message_id, username, reaction));
+CREATE INDEX IF NOT EXISTS idx_message_reactions_message ON message_reactions(message_id);
+CREATE TABLE IF NOT EXISTS message_reads (message_id TEXT NOT NULL, username TEXT NOT NULL, state TEXT NOT NULL, at INTEGER NOT NULL, PRIMARY KEY(message_id, username, state));
+CREATE INDEX IF NOT EXISTS idx_message_reads_user ON message_reads(username, state);
+CREATE TABLE IF NOT EXISTS message_attachments (message_id TEXT NOT NULL, file_id TEXT NOT NULL, name TEXT NOT NULL DEFAULT '', mime TEXT NOT NULL DEFAULT '', size INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(message_id, file_id));
+CREATE INDEX IF NOT EXISTS idx_message_attachments_file ON message_attachments(file_id);
+CREATE TABLE IF NOT EXISTS file_refs (file_id TEXT NOT NULL, owner TEXT NOT NULL, entity TEXT NOT NULL, entity_id TEXT NOT NULL, created_at INTEGER NOT NULL, PRIMARY KEY(file_id, entity, entity_id));
