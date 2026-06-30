@@ -3,6 +3,8 @@ name: Build and publish NightVault
 on:
   workflow_dispatch:
   push:
+    branches:
+      - main
     tags:
       - "v*"
 
@@ -12,6 +14,7 @@ permissions:
 jobs:
   build-windows:
     runs-on: windows-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -20,7 +23,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+
+      - name: Verify release version before install
+        shell: pwsh
+        run: |
+          node -e "const p=require('./package.json'); console.log('package version:', p.version); if(p.version !== '1.4.7'){ throw new Error('package.json version must be 1.4.7 before release build'); }"
 
       - name: Install dependencies
         run: npm install

@@ -2,10 +2,8 @@ node_modules/
 dist/
 server/runtime/
 uploads/
+.git/
+.env
 debug-packs/
 tester-reports/
-NightVault-Setup-*.exe
-NightVault-*-x64.exe
-*.blockmap
-*.tmp
 *.bak-147

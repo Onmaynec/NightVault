@@ -1,0 +1,13 @@
+{
+  "version": "1.4.7",
+  "title": "NightVault 1.4.7 — UI Action Router & CSP Hardening Update",
+  "changes": [
+    "Добавлен UI Action Router 1.4.7 layer для data-action сценариев и telemetry.",
+    "Добавлены CSP diagnostics и listener для securitypolicyviolation.",
+    "Добавлены аудиты UI actions, CSP consistency, no-render-in-input и legacy compatibility.",
+    "Добавлен admin router-style actions layer.",
+    "Добавлены docs/UI_ACTIONS_MAP.md, LEGACY_COMPATIBILITY_MAP.md и UI_ACTIONS_TEST_PLAN_1.4.7.md.",
+    "Добавлен apply:147 patch script, который обновляет version/scripts/CSP/script tags без полного переписывания renderer.js.",
+    "Подготовлен release guide и release-history для 1.4.7."
+  ]
+}

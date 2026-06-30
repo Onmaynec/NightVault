@@ -33,6 +33,17 @@ function intFromEnv(name, fallback, min, max) {
   return Math.max(min, Math.min(max, Math.trunc(value)));
 }
 
+const maxImageMb = intFromEnv("NIGHTVAULT_MAX_IMAGE_MB", 15, 1, 80);
+const maxAudioMb = intFromEnv("NIGHTVAULT_MAX_AUDIO_MB", 30, 1, 120);
+const maxVideoMb = intFromEnv("NIGHTVAULT_MAX_VIDEO_MB", 100, 1, 500);
+const maxDocumentMb = intFromEnv("NIGHTVAULT_MAX_DOCUMENT_MB", 50, 1, 250);
+const maxFileMb = intFromEnv(
+  "NIGHTVAULT_MAX_FILE_MB",
+  Math.max(100, maxImageMb, maxAudioMb, maxVideoMb, maxDocumentMb),
+  1,
+  500,
+);
+
 module.exports = {
   version: packageJson.version,
   rootDir,
@@ -45,12 +56,12 @@ module.exports = {
   host: process.env.NIGHTVAULT_HOST || "127.0.0.1",
   port: intFromEnv("NIGHTVAULT_PORT", 3000, 1, 65535),
   maxJsonBytes: intFromEnv("NIGHTVAULT_MAX_JSON_MB", 1, 1, 8) * 1024 * 1024,
-  maxFileBytes: intFromEnv("NIGHTVAULT_MAX_FILE_MB", 50, 1, 250) * 1024 * 1024,
+  maxFileBytes: maxFileMb * 1024 * 1024,
   maxAvatarBytes: 8 * 1024 * 1024,
-  maxImageBytes: intFromEnv("NIGHTVAULT_MAX_IMAGE_MB", 15, 1, 80) * 1024 * 1024,
-  maxAudioBytes: intFromEnv("NIGHTVAULT_MAX_AUDIO_MB", 30, 1, 120) * 1024 * 1024,
-  maxVideoBytes: intFromEnv("NIGHTVAULT_MAX_VIDEO_MB", 100, 1, 500) * 1024 * 1024,
-  maxDocumentBytes: intFromEnv("NIGHTVAULT_MAX_DOCUMENT_MB", 50, 1, 250) * 1024 * 1024,
+  maxImageBytes: maxImageMb * 1024 * 1024,
+  maxAudioBytes: maxAudioMb * 1024 * 1024,
+  maxVideoBytes: maxVideoMb * 1024 * 1024,
+  maxDocumentBytes: maxDocumentMb * 1024 * 1024,
   accessTtlMs: intFromEnv("NIGHTVAULT_ACCESS_MINUTES", 30, 5, 1440) * 60 * 1000,
   refreshTtlMs:
     intFromEnv("NIGHTVAULT_REFRESH_DAYS", 30, 1, 180) * 24 * 60 * 60 * 1000,

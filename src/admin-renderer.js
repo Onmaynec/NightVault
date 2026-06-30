@@ -262,3 +262,5 @@ window.runAdminCommand = async function runAdminCommand(command){
   };
 })();
 /* backup dry-run */
+
+// NightVault 1.4.6 release marker

@@ -16,6 +16,16 @@
     "ontouchend",
   ];
 
+  const metrics = {
+    version: "1.4.6",
+    scanned: 0,
+    bound: 0,
+    errors: 0,
+    lastError: "",
+    lastAction: "",
+    byAttr: {},
+  };
+
   function eventName(attr) {
     return attr.slice(2);
   }
@@ -24,11 +34,12 @@
     const raw = String(value || "").trim();
     if (!raw) return undefined;
     if (raw === "event") return event;
+    if (raw === "this") return event?.currentTarget;
     if (raw === "true") return true;
     if (raw === "false") return false;
     if (raw === "null") return null;
     if (/^-?\d+(?:\.\d+)?$/.test(raw)) return Number(raw);
-    const quoted = raw.match(/^['"]([\s\S]*)['"]$/);
+    const quoted = raw.match(/^["']([\s\S]*)["']$/);
     if (quoted) return quoted[1].replace(/\\'/g, "'").replace(/\\"/g, '"');
     return raw;
   }
@@ -37,6 +48,7 @@
     const out = [];
     let current = "";
     let quote = "";
+    let depth = 0;
     for (let i = 0; i < args.length; i += 1) {
       const char = args[i];
       if (quote) {
@@ -49,7 +61,9 @@
         current += char;
         continue;
       }
-      if (char === ",") {
+      if (char === "(" || char === "[" || char === "{") depth += 1;
+      if (char === ")" || char === "]" || char === "}") depth = Math.max(0, depth - 1);
+      if (char === "," && depth === 0) {
         out.push(current.trim());
         current = "";
         continue;
@@ -59,7 +73,6 @@
     if (current.trim()) out.push(current.trim());
     return out;
   }
-
 
   function assignLocalStorage(statement) {
     const match = statement.match(/^localStorage\.([a-zA-Z0-9_$]+)\s*=\s*([\s\S]+)$/);
@@ -82,15 +95,31 @@
     else if (value === "true") window.S[key] = true;
     else if (value === "false") window.S[key] = false;
     else if (value === "null") window.S[key] = null;
-    else if (/^['"]/.test(value)) window.S[key] = parseArg(value);
+    else if (/^["']/.test(value)) window.S[key] = parseArg(value);
     else if (/^-?\d+(?:\.\d+)?$/.test(value)) window.S[key] = Number(value);
     else window.S[key] = value;
     return true;
   }
 
+  function routeDataAction(element, event) {
+    const action = element?.dataset?.action || "";
+    if (!action) return false;
+    metrics.lastAction = `data-action:${action}`;
+    if (window.NVUIActionRouter?.run) {
+      window.NVUIActionRouter.run(action, { event, element, action });
+      return true;
+    }
+    if (window.NvUiActions?.run) {
+      window.NvUiActions.run(action, { event, element, action });
+      return true;
+    }
+    return false;
+  }
+
   function runStatement(statement, event, element) {
     const code = statement.trim();
     if (!code) return;
+    metrics.lastAction = code.slice(0, 160);
     if (code === "event.stopPropagation()") return event.stopPropagation();
     if (code === "event.preventDefault()") return event.preventDefault();
     if (code === "document.querySelector('.ctx').remove()" || code === "document.querySelector('.ctx')?.remove()") return document.querySelector(".ctx")?.remove();
@@ -122,37 +151,73 @@
 
   function runInlineAction(element, event, code) {
     try {
-      for (const statement of String(code || "").split(";")) {
-        runStatement(statement, event, element);
-      }
+      if (routeDataAction(element, event)) return;
+      for (const statement of String(code || "").split(";")) runStatement(statement, event, element);
     } catch (error) {
-      if (typeof window.__nvHandleInlineError === "function") {
-        window.__nvHandleInlineError(error);
-      } else {
-        console.error(error);
-      }
+      metrics.errors += 1;
+      metrics.lastError = error?.message || String(error);
+      if (typeof window.__nvHandleInlineError === "function") window.__nvHandleInlineError(error);
+      else console.error(error);
+    }
+  }
+
+  function bindPartial(root = document, reason = "") {
+    try {
+      window.NVActionBridge?.bind(root);
+      return true;
+    } catch (error) {
+      metrics.errors += 1;
+      metrics.lastError = `bindPartial ${reason}: ${error?.message || error}`;
+      console.error("NightVault bindPartial failed", reason, error);
+      try { window.toast?.("Ошибка привязки UI-действий: " + (error?.message || error)); } catch {}
+      return false;
     }
   }
 
   window.NVActionBridge = {
     bind(root = document) {
       if (!root?.querySelectorAll) return;
-      const selector = ATTRS.map((attr) => `[${attr}]`).join(",");
+      const selector = ATTRS.map((attr) => `[${attr}], [data-action]`).join(",");
       const bindOne = (element) => {
+        metrics.scanned += 1;
+        if (element?.dataset?.action && !element.dataset.nvBoundDataAction) {
+          element.dataset.nvBoundDataAction = "1";
+          element.addEventListener("click", function onNvDataAction(event) {
+            return runInlineAction(this, event, "");
+          });
+          metrics.bound += 1;
+          metrics.byAttr["data-action"] = (metrics.byAttr["data-action"] || 0) + 1;
+        }
         for (const attr of ATTRS) {
-          const code = element.getAttribute(attr);
+          const code = element.getAttribute?.(attr);
           if (!code || element.dataset[`nvBound${attr}`]) continue;
           element.dataset[`nvBound${attr}`] = "1";
           element.addEventListener(eventName(attr), function onNvAction(event) {
             return runInlineAction(this, event, code);
           });
           element.removeAttribute(attr);
+          metrics.bound += 1;
+          metrics.byAttr[attr] = (metrics.byAttr[attr] || 0) + 1;
         }
       };
       if (root.nodeType === 1) bindOne(root);
       root.querySelectorAll(selector).forEach(bindOne);
     },
+    stats() {
+      return { ...metrics, byAttr: { ...metrics.byAttr } };
+    },
+    resetStats() {
+      metrics.scanned = 0;
+      metrics.bound = 0;
+      metrics.errors = 0;
+      metrics.lastError = "";
+      metrics.lastAction = "";
+      metrics.byAttr = {};
+    },
   };
+
+  window.nvBindPartial = bindPartial;
+  window.nv146UiActionStats = () => window.NVActionBridge.stats();
 
   const startObserver = () => {
     window.NVActionBridge.bind(document);

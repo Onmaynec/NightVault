@@ -3,12 +3,13 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' file:; script-src-elem 'self' file:; script-src-attr 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src http: https: ws: wss:; font-src 'self' data:; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' file:; script-src-elem 'self' file:; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src http: https: ws: wss:; font-src 'self' data:; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'" />
     <title>NightVault Server Admin</title>
     <link rel="stylesheet" href="admin.css" />
   </head>
   <body>
     <div id="app"><div class="boot"><div class="orb"></div><h1>NightVault Server Admin</h1><p>Запуск панели администратора…</p></div></div>
+    <script src="admin-actions.js"></script>
     <script src="admin-renderer.js"></script>
   </body>
 </html>

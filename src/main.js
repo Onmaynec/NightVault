@@ -720,7 +720,7 @@ function installCspHeaders() {
     "default-src 'self'",
     "script-src 'self' file:",
     "script-src-elem 'self' file:",
-    "script-src-attr 'unsafe-inline'",
+    "script-src-attr 'none'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "media-src 'self' blob:",

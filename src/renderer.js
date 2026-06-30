@@ -1,7 +1,7 @@
 window.NV_RENDERER_STARTED = true;
 let runtimeDefaultServer = "http://127.0.0.1:3000";
 const DEFAULT_SERVER = "http://127.0.0.1:3000";
-const RELEASE_LABEL = "1.4.4";
+const RELEASE_LABEL = "1.4.6";
 function normServerUrl(v) {
   return window.NVClientApi?.normalizeServer
     ? window.NVClientApi.normalizeServer(v, DEFAULT_SERVER)
@@ -6508,4 +6508,56 @@ function closest() { return null; }
       document.querySelectorAll('.securityCard').forEach((node)=>{ if (/Приватность 1\.0\.9/i.test(node.textContent || '')) node.remove(); });
     }, 0), true);
   });
+})();
+
+// NightVault 1.4.6 — Real Electron QA & UI Safety compatibility layer.
+(function nv146QaLayer() {
+  if (window.__nv146QaLayer) return;
+  window.__nv146QaLayer = true;
+  window.NV_QA_RELEASE = "1.4.6";
+  window.NV_QA_CAPABILITIES = Object.freeze({
+    realElectronSmoke: true,
+    staticSmokeSeparated: true,
+    twoProfileQa: true,
+    uiActionsReport: true,
+    e2eeHealthHonestRecoveryWording: true,
+  });
+  window.nv146GetQaStatus = function nv146GetQaStatus() {
+    const safeStorage = Boolean(window.NVBridge?.authCurrent);
+    const actionStats = window.NVActionBridge?.stats?.() || null;
+    return {
+      version: "1.4.6",
+      rendererStarted: Boolean(window.NV_RENDERER_STARTED),
+      user: window.S?.user?.username || "",
+      server: typeof getServerHttp === "function" ? getServerHttp() : "",
+      e2eeDeviceId: window.S?.e2ee?.deviceId || localStorage.nvE2eeDeviceId || "",
+      safeStorageBridge: safeStorage,
+      actionStats,
+      note: "Local decrypted cache is not a full E2EE recovery bundle.",
+    };
+  };
+  window.nv146CopyQaStatus = async function nv146CopyQaStatus() {
+    const text = JSON.stringify(window.nv146GetQaStatus(), null, 2);
+    try { await navigator.clipboard?.writeText(text); toast?.("QA status скопирован."); }
+    catch { console.log(text); toast?.("QA status выведен в console."); }
+    return text;
+  };
+})();
+
+
+// NightVault 1.4.7 — UI Action Router & CSP hardening compatibility layer.
+(function nv147UiActionLayer(){
+  if (window.nv147UiActionLayerInstalled) return;
+  window.nv147UiActionLayerInstalled = true;
+  window.nv147GetUiDebug = function(){
+    return {
+      version: "1.4.7",
+      actionTelemetry: window.NVActionTelemetry || null,
+      csp: typeof window.nv147CspDebug === "function" ? window.nv147CspDebug() : null,
+      lastAction: window.NVActionTelemetry?.lastAction || null,
+    };
+  };
+  window.addEventListener("DOMContentLoaded", () => {
+    try { window.nvBindPartial?.(document, "nv147-domcontentloaded"); } catch {}
+  }, { once:true });
 })();

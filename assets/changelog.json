@@ -1,6 +1,40 @@
 {
   "items": [
     {
+      "version": "1.4.7",
+      "title": "NightVault 1.4.7 — UI Action Router & CSP Hardening Update",
+      "changes": [
+        "Добавлен UI Action Router 1.4.7 layer для data-action сценариев и telemetry.",
+        "Добавлены CSP diagnostics и listener для securitypolicyviolation.",
+        "Добавлены аудиты UI actions, CSP consistency, no-render-in-input и legacy compatibility.",
+        "Добавлен admin router-style actions layer.",
+        "Добавлены docs/UI_ACTIONS_MAP.md, LEGACY_COMPATIBILITY_MAP.md и UI_ACTIONS_TEST_PLAN_1.4.7.md.",
+        "Добавлен apply:147 patch script, который обновляет version/scripts/CSP/script tags без полного переписывания renderer.js.",
+        "Подготовлен release guide и release-history для 1.4.7."
+      ]
+    },
+    {
+      "version": "1.4.6",
+      "title": "NightVault 1.4.6 — Real Electron QA & UI Safety Update",
+      "changes": [
+        "Добавлен настоящий Electron smoke harness через remote debugging/CDP с запуском сервера и проверкой DOM.",
+        "Старые статические E2E-проверки честно вынесены в e2e-static-smoke.js и npm run e2e:static.",
+        "Добавлен two-profile QA smoke для проверки сценария двух клиентов на одном ПК и документация по изоляции профилей.",
+        "Добавлены отчёты по UI actions, legacy inline handlers и duplicate globals для безопасного перехода на data-action.",
+        "Добавлена политика cleanup/releaseignore и скрипты release QA, release assets check, version consistency и prepare release source.",
+        "Добавлены документы UI_ACTIONS_MAP, LEGACY_COMPATIBILITY_MAP, GIT_UPLOAD_GUIDE_1.4.6 и release notes 1.4.6.",
+        "E2EE recovery формулируется честно: локальный cache не заменяет настоящий recovery bundle. Полный bundle остаётся отдельной задачей.",
+        "Renderer.js не переписывается: версия 1.4.6 добавляет точечный QA patch layer через apply script и сохраняет compatibility layers."
+      ]
+    },
+    {
+      "version": "1.4.5",
+      "title": "NightVault 1.4.5 — Reliability & Fresh DB Fix",
+      "changes": [
+        "Fresh SQLite validation, DB audits, upload limit alignment, UI action audits, cleanup reports and release documentation."
+      ]
+    },
+    {
       "version": "1.4.4",
       "title": "NightVault 1.4.4 — Bugfix & Render Stability Update",
       "changes": [
@@ -8,12 +42,9 @@
         "Исправлены кнопки обновления устройств, проверки микрофона, Blur lock и E2EE Recovery без неподдержанных inline-действий.",
         "Добавлен fallback для OverconstrainedError при проверке микрофона.",
         "Исправлены Backup AES-GCM, баннер профиля, пользовательский фон чата и glass blur.",
-        "Убран старый текст Приватность 1.0.9 из профиля/настроек.",
-        "Стабилизирован частичный рендер контактов и очистка reply preview после отправки ответа.",
-        "Усилен локальный E2EE recovery cache и ручная пересинхронизация ключей.",
-        "Улучшена устойчивость WAV/аудио воспроизведения.",
-        "Подготовлена отдельная документация для передачи проекта другой нейросети."
+        "Стабилизирован частичный рендер контактов, reply preview, локальный E2EE cache и WAV/audio playback."
       ]
     }
-  ]
+  ],
+  "latest": "1.4.7"
 }
